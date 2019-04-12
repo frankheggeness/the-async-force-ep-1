@@ -57,13 +57,29 @@ function filmsReqListener() {
   console.log(responseData);
 
   for (let i = 0; i < responseData.length; i++) {
-    let newList = document.createElement('li');
-    newList.innerHTML = responseData[i].title;
+    let newList = document.createElement('h1');
+    newList.innerHTML = 'Film Name: ' + responseData[i].title;
     filmList.appendChild(newList);
+    let planetArray = responseData[i].planets;
+
+    for (let y = 0; y < planetArray.length; y++) {
+      function filmPlanetReqListener() {
+        let responseData = JSON.parse(this.responseText);
+        console.log(responseData);
+
+        let planetNameLi = document.createElement('ul');
+        planetNameLi.innerHTML = responseData.name;
+        newList.appendChild(planetNameLi);
+      }
+
+      const filmPlanetReq = new XMLHttpRequest();
+      filmPlanetReq.addEventListener('load', filmPlanetReqListener);
+      filmPlanetReq.open('Get', planetArray[y]);
+      filmPlanetReq.send();
+    }
   }
 }
 
 filmsReq.addEventListener('load', filmsReqListener);
-
 filmsReq.open('GET', 'https://swapi.co/api/films/');
 filmsReq.send();
